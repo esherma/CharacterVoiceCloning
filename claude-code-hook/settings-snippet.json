@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.config/cmdr-data-voice/speak.sh",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

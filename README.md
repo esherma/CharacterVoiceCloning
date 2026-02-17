@@ -1,46 +1,72 @@
 # CharacterVoiceCloning
 
-A toolkit for extracting clean voice clips from YouTube videos and preparing them as reference audio for TTS voice cloning. Built for cloning fictional character voices for personal, non-commercial use (e.g. a home assistant that sounds like your favorite starship officer).
+Clone a fictional character's voice from YouTube clips and use it for text-to-speech on Apple Silicon. Built with [Qwen3-TTS](https://huggingface.co/Qwen/Qwen3-TTS) via [mlx-audio](https://github.com/Blaizzy/mlx-audio) for fast local inference.
 
 **This project is intended exclusively for personal use.** It is not designed for, nor should it be used for, commercial purposes, impersonation, or any use that would infringe on the rights of content creators or voice actors.
 
-## What It Does
+## How It Works
 
-1. **Search & Download** -- Search YouTube for videos featuring a character's voice and download them as high-quality audio
-2. **Extract Clips** -- Interactively select time ranges to pull clean speech clips, with built-in noise reduction and normalization
-3. **Combine Clips** -- Merge your best clips into a single 30-60 second reference file suitable for TTS voice cloning
+1. **Extract clips** -- Search YouTube for videos featuring a character's voice, download them, and interactively extract clean speech clips with noise reduction and normalization
+2. **Clone the voice** -- Use a reference clip + transcript with Qwen3-TTS Base models to generate new speech in the character's voice
+3. **Use it** -- Integrate with tools like Claude Code hooks to have your AI assistant speak in the cloned voice
+
+## Why MLX?
+
+We tried PyTorch on Apple Silicon (MPS backend) first. It was ~3-4x slower than real-time and produced poor audio quality. Switching to [mlx-audio](https://github.com/Blaizzy/mlx-audio) gave us:
+
+| Model | RTF (real-time factor) | Notes |
+|-------|------------------------|-------|
+| 0.6B-8bit | **0.62x** | Faster than real-time. Best speed/quality tradeoff. |
+| 0.6B-bf16 | 2.71x | |
+| 1.7B-8bit | 0.72x | |
+| 1.7B-bf16 | 4.25x | Slightly crisper audio, much slower. |
+
+RTF < 1.0 means faster than real-time. The **0.6B-8bit** model is the sweet spot.
 
 ## Prerequisites
 
+- macOS with Apple Silicon (M1+)
 - Python 3.13+
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp) -- `brew install yt-dlp`
-- [ffmpeg](https://ffmpeg.org/) -- `brew install ffmpeg`
+- [uv](https://docs.astral.sh/uv/)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [ffmpeg](https://ffmpeg.org/) -- `brew install yt-dlp ffmpeg`
 
-## Usage
+## Quick Start
 
-### Search, download, and extract clips
-
-```bash
-python data_extractor.py "Data Star Trek voice lines"
-```
-
-Options:
-- `-n` / `--max-results` -- Number of YouTube search results (default: 5)
-- `-o` / `--output-dir` -- Base output directory (default: `output`)
-
-The tool will walk you through selecting videos to download and then interactively extracting time ranges as individual clips.
-
-### Extract clips from previously downloaded files
+### Extract voice clips from YouTube
 
 ```bash
-python data_extractor.py --clip -o output
+uv run python data_extractor.py "Data Star Trek voice lines"
 ```
 
-### Combine clips into a reference file
+This searches YouTube, downloads selected videos, and walks you through extracting time ranges as individual clips. Clips are saved to `data_output/clips/`.
+
+### Generate speech with the cloned voice
 
 ```bash
-python combine_clips.py output/clips/clip_01.wav output/clips/clip_02.wav output/clips/clip_03.wav combined_reference.wav
+# Using the CLI (works anywhere if mlx-audio is installed globally)
+mlx_audio.tts.generate \
+  --model mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit \
+  --text "I am functioning within normal parameters." \
+  --ref_audio data_output/clips/clip_14.wav \
+  --ref_text "The exact transcript of the reference clip" \
+  --play --stream
 ```
+
+Or run the benchmarking script to compare models:
+
+```bash
+uv run python test_voice_clone.py 0.6B-8bit 1.7B-bf16 --clips clip_14
+```
+
+### Claude Code hook
+
+You can set up a Claude Code [Stop hook](https://docs.anthropic.com/en/docs/claude-code/hooks) so that every Claude response is spoken aloud in the cloned voice. See [`claude-code-hook/`](claude-code-hook/) for setup instructions.
+
+## Key Findings
+
+- **Transcript mode matters**: Providing a text transcript of the reference clip (`--ref_text`) significantly improves voice cloning quality vs. x_vector-only mode (no transcript).
+- **Single clip is enough**: A single clean 10-15 second clip works well. We didn't need to concatenate multiple clips.
+- **Quantization is fine**: The 8-bit quantized model sounds nearly as good as bf16 at 4x the speed.
 
 ## Audio Processing
 
@@ -49,4 +75,10 @@ Extracted clips are automatically processed with:
 - Low-pass filter (8kHz) to remove hiss
 - Adaptive noise reduction
 - Loudness normalization (ITU-R BS.1770)
-- Downsampled to 22.05kHz mono (optimized for speech/TTS)
+- Downsampled to 22.05kHz mono
+
+## Acknowledgments
+
+- [mlx-audio](https://github.com/Blaizzy/mlx-audio) by Prince Canuma -- MLX inference library that makes this project possible. MIT License.
+- [Qwen3-TTS](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-0.6B-Base) by Alibaba Qwen -- the underlying TTS model
+- [mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit](https://huggingface.co/mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit) -- quantized MLX weights used in this project
