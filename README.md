@@ -18,7 +18,7 @@ We tried PyTorch on Apple Silicon (MPS backend) first. It was ~3-4x slower than 
 |-------|------------------------|-------|
 | 0.6B-8bit | **0.62x** | Faster than real-time. Best speed/quality tradeoff. |
 | 0.6B-bf16 | 2.71x | |
-| 1.7B-8bit | 0.72x | |
+| 1.7B-8bit | 0.72x | Audio generations overly crisp for target character (Commander Data); Likely a good choice for other characters|
 | 1.7B-bf16 | 4.25x | Slightly crisper audio, much slower. |
 
 RTF < 1.0 means faster than real-time. The **0.6B-8bit** model is the sweet spot.
