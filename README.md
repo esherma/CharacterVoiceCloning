@@ -4,6 +4,20 @@ Clone a fictional character's voice from YouTube clips and use it for text-to-sp
 
 **This project is intended exclusively for personal use.** It is not designed for, nor should it be used for, commercial purposes, impersonation, or any use that would infringe on the rights of content creators or voice actors.
 
+## Demo
+
+<!--
+  TODO: Record demo video (Claude Code hook speaking a response in the cloned voice).
+    1. Commit the video file to this repo (e.g. demo.mp4, keep it under 10MB)
+    2. Delete the blockquote below and replace it with: ![Demo](demo.mp4)
+-->
+
+> **Demo video coming soon.** *(A screen recording of the Claude Code Stop hook speaking responses aloud in the cloned voice.)*
+
+**Try it yourself** — the Colab notebook below lets you clone any voice from a short reference clip (no Apple Silicon required):
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/esherma/CharacterVoiceCloning/blob/main/voice_cloning_demo.ipynb)
+
 ## How It Works
 
 1. **Extract clips** -- Search YouTube for videos featuring a character's voice, download them, and interactively extract clean speech clips with noise reduction and normalization
