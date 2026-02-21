@@ -6,13 +6,8 @@ Clone a fictional character's voice from YouTube clips and use it for text-to-sp
 
 ## Demo
 
-<!--
-  TODO: Record demo video (Claude Code hook speaking a response in the cloned voice).
-    1. Commit the video file to this repo (e.g. demo.mp4, keep it under 10MB)
-    2. Delete the blockquote below and replace it with: ![Demo](demo.mp4)
--->
+https://github.com/user-attachments/assets/7314e629-4f60-4e36-8897-465eca991890
 
-> **Demo video coming soon.** *(A screen recording of the Claude Code Stop hook speaking responses aloud in the cloned voice.)*
 
 **Try it yourself** — the Colab notebook below lets you clone any voice from a short reference clip (no Apple Silicon required):
 
