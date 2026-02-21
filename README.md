@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/7314e629-4f60-4e36-8897-465eca991890
 
 **Try it yourself** — the Colab notebook below lets you clone any voice from a short reference clip (no Apple Silicon required):
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/esherma/CharacterVoiceCloning/blob/main/voice_cloning_demo.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/esherma/CharacterVoiceCloning/blob/master/voice_cloning_demo.ipynb)
 
 ## How It Works
 
